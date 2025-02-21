@@ -9,15 +9,21 @@
   "author": "Tyler Potts",
   "license": "ISC",
   "dependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/register": "^7.25.9",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.17.1",
     "express-async-handler": "^1.2.0",
     "jade": "^1.11.0",
     "mongoose": "^5.13.2",
     "morgan": "^1.10.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.9"
