@@ -7,7 +7,7 @@ const multer = require('multer');
 const mammoth = require('mammoth');
 const { OpenAI } = require('openai');
 const upload = multer({ storage: multer.memoryStorage() });
-const { ATSResult, extractResumeText, computeATSScore , generateSuggestions} = require('../../helper/helper');
+const { extractResumeText, computeATSScore, generateSuggestions } = require('../../helper/helper');
 
 router.get('/', function (req, res, next) {
   res.sendFile(path.join(path.join(__dirname, "../../view"), "client", "build", "index.html"));
@@ -23,8 +23,12 @@ router.post('/upload', upload.single('resume'), async (req, res) => {
     const jobDescription = req.body.jobDescription;
     const score = computeATSScore(resumeText, jobDescription);
     const suggestions = generateSuggestions(resumeText, jobDescription);
-    const html = ReactDOMServer.renderToString(React.createElement(ATSResult, { score, suggestions }));
-    res.send(`<!DOCTYPE html><html><head><title>ATS Score</title></head><body>${html}</body></html>`);
+    const data = {
+      title: "ATS Resume Score",
+      score: `${score}/100`,
+      improvementSuggestions: suggestions || []
+    }
+    res.json(data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error processing resume' });

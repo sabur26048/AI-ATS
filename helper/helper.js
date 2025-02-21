@@ -3,16 +3,6 @@ const natural = require('natural');
 const React = require("react");
 const TfIdf = natural.TfIdf;
 
-function ATSResult({ score, suggestions }) {
-    return React.createElement('div', null,
-        React.createElement('h1', null, 'ATS Resume Score'),
-        React.createElement('p', null, `Score: ${score}/100`),
-        React.createElement('h2', null, 'Improvement Suggestions'),
-        React.createElement('ul', null, suggestions.map((s, i) =>
-            React.createElement('li', { key: i }, s)
-        ))
-    );
-}
 
 async function extractResumeText(file) {
     let filee = file;
@@ -60,4 +50,4 @@ function generateSuggestions(resumeText, jobDescription) {
     return suggestions.length > 0 ? suggestions : ["Your resume is well-optimized!"];
 }
 
-module.exports = { ATSResult, extractResumeText, computeATSScore, generateSuggestions };
+module.exports = { extractResumeText, computeATSScore, generateSuggestions };
