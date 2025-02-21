@@ -32,8 +32,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // ✅ Serve React Build (Uncomment if needed)
-// const buildPath = path.join(__dirname, "..", "view", "client", "build");
-// app.use(express.static(buildPath));
+ const buildPath = path.join(__dirname, "..","helper","build");
+ app.use(express.static(buildPath));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

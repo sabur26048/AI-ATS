@@ -10,11 +10,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 const { extractResumeText, computeATSScore, generateSuggestions } = require('../../helper/helper');
 
 router.get('/', function (req, res, next) {
- // res.sendFile(path.join(path.join(__dirname, "../../view"), "client", "build", "index.html"));
-  // const name = req.query.name || "Guest";
-  // const html = ReactDOMServer.renderToString(React.createElement(Welcome, { name }));
-  // res.send(`<!DOCTYPE html>${html}`);
-  res.json({ message: 'Welcome to ATS Resume Score API!' });
+  const dirname = path.join(__dirname, "..");
+  res.sendFile(path.join("build", "index.html"));
 });
 router.post('/upload', upload.single('resume'), async (req, res) => {
   if (!req.resume || !req.body.jobDescription)
