@@ -17,8 +17,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-const buildPath = path.join(__dirname, "..", "view", "client", "build");
-console.log("Serving static files from:", buildPath);
+//const buildPath = path.join(__dirname, "..", "view", "client", "build");
+//console.log("Serving static files from:", buildPath);
 
 //app.use(express.static(buildPath));app.use('/', indexRouter);
 
