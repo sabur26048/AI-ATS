@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon src/app.js"
+    "start": "nodemon src/app.js",
+    "build": "npm install && npm run compile"
   },
   "author": "Tyler Potts",
   "license": "ISC",
