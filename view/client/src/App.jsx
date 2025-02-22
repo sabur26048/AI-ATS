@@ -60,17 +60,16 @@ function App() {
     formData.append("jobDescription", jobDescription);
 
     try {
-      const response = await fetch("https://ai-ats-9i1p.onrender.com/upload", {
+      const response = await fetch("http://localhost:3008/getAtsScore", {
         method: "POST",
         body: formData
       });
-
       const result = await response.json();
-
       if (response.ok) {
         setModalIsOpen(true);
         setServerResponce(result);
-
+        let res = await fetchSuggestion(formData, result);
+        setServerResponce(res);
       } else {
         setMessage(`Upload failed: ${result.error}`);
       }
@@ -83,8 +82,15 @@ function App() {
   const handleError = () => {
     setMessage("");
   }
-
-
+  const fetchSuggestion = async (formData, result) => {
+    const score = Number(result.score.split("/")[0]);
+    let res = await fetch(`http://localhost:3008/suggestion/${score}`, {
+      method: "POST",
+      body: formData
+    });
+    let data = await res.json();
+    return data;
+  }
   return (
     <div className="App-header APP">
       <h1 style={{ fontSize: "2.5rem", color: "black", paddingBottom: "0px" }}>AI-ATS</h1>
@@ -162,7 +168,7 @@ function App() {
           >
             <div>
               <span className="loading-icon">⏳</span>
-              <span> Please wait... </span>
+              <span> {serverResponce.score ? "Suggestions are fetching..." : "Please wait..."} </span>
               <span className="blinking-emoji">😊</span>
             </div>
 
@@ -187,7 +193,9 @@ function App() {
         <h2>{serverResponce.title}</h2>
         <p>{serverResponce.score}</p>
         <button
-          onClick={() => setModalIsOpen(false)}
+          onClick={() => {
+            setModalIsOpen(false);
+          }}
           style={{
             marginTop: "15px",
             padding: "8px 12px",
@@ -203,55 +211,133 @@ function App() {
       </Modal>
       <Modal
         isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
+        onRequestClose={() => {
+          setModalIsOpen(false)
+          setServerResponce({});
+        }}
         style={{
           content: {
-            width: "58%",
-            height: "61%",
+            width: "60%",
+            height: "65%",
             margin: "auto",
-            padding: "3px",
+            padding: "20px",
             textAlign: "center",
             borderRadius: "10px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-            border: "3px solid green"
+            boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.2)",
+            border: "3px solid #28a745",
+            background: "#f8f9fa",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            position: "relative"
           }
         }}
       >
-        <h2>{serverResponce.title}</h2>
-        <p style={{ fontWeight: "bold", color: "blue" }}>{serverResponce.score}</p>
-        <textarea
-          placeholder={serverResponce.improvementSuggestions}
-          style={{
-            width: "90%",
-            height: "48%",
-            padding: "10px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            resize: "none",
-            border: "1px solid black",
-            color: "black",
+        {/* Fixed Title & Score Section */}
+        <div style={{
+          width: "100%",
+          textAlign: "center",
+          position: "sticky",
+          top: "0",
+          background: "#f8f9fa",
+          paddingBottom: "10px",
+          borderBottom: "3px solid #28a745" // Green border for a clean look
+        }}>
+          <h2 style={{
+            fontSize: "22px",
             fontWeight: "bold",
-            fontFamily: "Arial",
-            background: "white",
-          }}
-          disabled
-        />
-        <br />
+            color: "#333",
+            marginBottom: "5px"
+          }}>
+            {serverResponce.title}
+          </h2>
+
+          <p
+            style={{
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: serverResponce.score > 70 ? "green" : "red",
+              background: "#e9ecef",
+              padding: "4px 15px",
+              borderRadius: "8px",
+              display: "inline-block",
+              margin: "0px",
+              marginBottom: "5px",
+            }}
+          >
+            Score: {serverResponce.score}
+          </p>
+        </div>
+
+
+        {/* Suggestions Section */}
+        <div style={{ width: "90%", padding: "15px", fontFamily: "Arial, sans-serif", textAlign: "left", overflowY: "auto", maxHeight: "400px" }}>
+
+          {/* Missing Keywords */}
+          <h3 style={{ color: "#007bff", marginBottom: "5px" }}>🔹 Missing Keywords</h3>
+          {serverResponce.improvementSuggestions?.missing_keywords?.length > 0 ? (
+            <ul style={{ paddingLeft: "20px", marginBottom: "10px" }}>
+              {serverResponce.improvementSuggestions?.missing_keywords?.map((keyword, index) => (
+                <li key={index} style={{ marginBottom: "5px" }}>✅ {keyword}</li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: "green", fontStyle: "italic" }}>✅ No missing keywords</p>
+          )}
+
+          {/* Experience Gaps */}
+          <h3 style={{ color: "#007bff", marginBottom: "5px" }}>🔹 Experience Gaps</h3>
+          {serverResponce.improvementSuggestions?.experience_gaps?.length > 0 ? (
+            <ul style={{ paddingLeft: "20px", marginBottom: "10px" }}>
+              {serverResponce.improvementSuggestions?.experience_gaps?.map((gap, index) => (
+                <li key={index} style={{ marginBottom: "10px" }}>
+                  <strong style={{ color: "#dc3545" }}>⚠ {gap.suggestion}</strong>
+                  <br />
+                  <small style={{ color: "#6c757d" }}>➤ {gap.reason}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: "green", fontStyle: "italic" }}>✅ No experience gaps</p>
+          )}
+
+          {/* Technical Skills Suggestions */}
+          <h3 style={{ color: "#007bff", marginBottom: "5px" }}>🔹 Technical Skills Suggestions</h3>
+          {serverResponce.improvementSuggestions?.technical_skills_suggestions?.missing_skills?.length > 0 ? (
+            <ul style={{ paddingLeft: "20px", marginBottom: "10px" }}>
+              {serverResponce.improvementSuggestions?.technical_skills_suggestions?.missing_skills?.map((skill, index) => (
+                <li key={index} style={{ marginBottom: "5px" }}>📌 {skill}</li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: "green", fontStyle: "italic" }}>✅ All required technical skills are covered</p>
+          )}
+        </div>
+
+        {/* Close Button */}
         <button
-          onClick={() => setModalIsOpen(false)}
+          onClick={() => {
+            setModalIsOpen(false);
+            setServerResponce({});
+          }}
           style={{
-            marginTop: "10px",
-            padding: "10px",
+            marginTop: "15px",
+            padding: "10px 20px",
             background: "#28a745",
             color: "#fff",
+            fontSize: "16px",
             border: "none",
             cursor: "pointer",
-            borderRadius: "5px"
+            borderRadius: "5px",
+            transition: "0.3s",
           }}
+          onMouseOver={(e) => (e.target.style.background = "#218838")}
+          onMouseOut={(e) => (e.target.style.background = "#28a745")}
         >
           Close
         </button>
       </Modal>
+
       {/* Job Description Modal */}
       <Modal
         isOpen={jobModalIsOpen}
