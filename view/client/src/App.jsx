@@ -13,6 +13,7 @@ function App() {
   const [isUploading, setIsUploading] = useState(false);
   const [serverResponce, setServerResponce] = useState({});
 
+  
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
 
@@ -38,7 +39,6 @@ function App() {
       setFile(selectedFile);
     }
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
