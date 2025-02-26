@@ -7,6 +7,8 @@ const cors = require("cors");
 var indexRouter = require("./routes/AI-ATS");
 var usersRouter = require("./routes/users");
 var app = express();
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 require("dotenv").config();
 require("@babel/register")({
   presets: ["@babel/preset-env", "@babel/preset-react"],
