@@ -34,8 +34,9 @@ router.post("/sendNotification", notificationLimiter, async (req, res) => {
     res.status(500).json({ error: "Failed to send notification" });
   }
 });
-router.post("/details", notificationLimiter, async (req, res) => {
-  res.json({});
+router.get("/details", notificationLimiter, async (req, res) => {
+  const queryParam = req.query.project;
+  res.json({ details: queryParam });
 });
 
 
