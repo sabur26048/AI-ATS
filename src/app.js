@@ -25,8 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()); const buildPath = path.join(__dirname, "..", "helper", "build");
 app.use(express.static(buildPath));
-app.use("/user", usersRouter);
+app.use("/user", cors(),usersRouter);
 app.use("/AI-ATS", indexRouter);
+
 
 app.use(function (req, res, next) {
   next(createError(404));
