@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()); const buildPath = path.join(__dirname, "..", "helper", "build");
 app.use(express.static(buildPath));
 app.use("/user", usersRouter);
-app.use("/", indexRouter);
+app.use("/AI-ATS", indexRouter);
 app.get("*", (req, res) => {
   // res.sendFile(path.join(buildPath, "index.html"));
 });

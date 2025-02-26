@@ -5,7 +5,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const { computeATSScore, generateSuggestions, makeTwoDecimal, mergeATSFeedback } = require('../../helper/helper');
 
-router.get('/AI-ATS', function (req, res, next) {
+router.get('/', function (req, res, next) {
   const buildPath = path.join(__dirname, "../..", "helper", "build", "index.html");
   res.sendFile(buildPath);
 });
